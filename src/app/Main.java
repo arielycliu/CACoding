@@ -2,11 +2,14 @@ package app;
 
 import data_access.FileUserDataAccessObject;
 import entity.CommonUserFactory;
+import interface_adapter.clear_users.ClearViewModel;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.logged_in.LoggedInViewModel;
 import interface_adapter.signup.SignupViewModel;
 import interface_adapter.ViewManagerModel;
+import use_case.clear_users.ClearUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
+import use_case.signup.SignupUserDataAccessInterface;
 import view.LoggedInView;
 import view.LoginView;
 import view.SignupView;
@@ -35,6 +38,8 @@ public class Main {
         ViewManagerModel viewManagerModel = new ViewManagerModel();
         new ViewManager(views, cardLayout, viewManagerModel);
 
+        // TODO 0: Note that the asterisk * behind a name means that I made it up - it is suggested you tweak it
+
         // The data for the views, such as username and password, are in the ViewModels.
         // This information will be changed by a presenter object that is reporting the
         // results from the use case. The ViewModels are observable, and will
@@ -42,6 +47,7 @@ public class Main {
         LoginViewModel loginViewModel = new LoginViewModel();
         LoggedInViewModel loggedInViewModel = new LoggedInViewModel();
         SignupViewModel signupViewModel = new SignupViewModel();
+        ClearViewModel clearViewModel = new ClearViewModel(); // TODO 1: add new clearViewModel* which we'll pass into SignupUseCaseFactory
 
         FileUserDataAccessObject userDataAccessObject;
         try {
@@ -50,7 +56,10 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        SignupView signupView = SignupUseCaseFactory.create(viewManagerModel, loginViewModel, signupViewModel, userDataAccessObject);
+        // TODO 2: edit the signupView call in Main to have the extra clearViewModel* argument
+        // TODO 2.5: - ctrl-click into SignupUseCaseFactory
+        SignupView signupView = SignupUseCaseFactory.create(viewManagerModel, loginViewModel, signupViewModel,
+                                                            userDataAccessObject, clearViewModel);
         views.add(signupView, signupView.viewName);
 
         LoginView loginView = LoginUseCaseFactory.create(viewManagerModel, loginViewModel, loggedInViewModel, userDataAccessObject);

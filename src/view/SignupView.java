@@ -1,5 +1,7 @@
 package view;
 
+import interface_adapter.clear_users.ClearController;
+import interface_adapter.clear_users.ClearViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
@@ -17,21 +19,33 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
     public final String viewName = "sign up";
 
     private final SignupViewModel signupViewModel;
+
+    // TODO 7: Now we want to add the clearViewModel as an attribute, this way we can use it in this class
+    // TODO 7: Although I'm realizing now that I never use it D:
+    private final ClearViewModel clearViewModel;
     private final JTextField usernameInputField = new JTextField(15);
     private final JPasswordField passwordInputField = new JPasswordField(15);
     private final JPasswordField repeatPasswordInputField = new JPasswordField(15);
     private final SignupController signupController;
 
+    // TODO 7: Now we want to add the clearController as an attribute, this way we can use it in this class
+    private final ClearController clearController;
+
     private final JButton signUp;
     private final JButton cancel;
 
-    // TODO Note: this is the new JButton for clearing the users file
     private final JButton clear;
 
-    public SignupView(SignupController controller, SignupViewModel signupViewModel) {
+    public SignupView(SignupController controller, SignupViewModel signupViewModel,
+                      ClearController clearController, ClearViewModel clearViewModel) {
+        // TODO 8: Remember how we called return new SignupView with two extra arguments in SignupUseCaseFactory?
+        // TODO 8: add clearController* and clearViewModel* to the class constructor header
 
         this.signupController = controller;
         this.signupViewModel = signupViewModel;
+        this.clearController = clearController; // TODO 9: Create clearController
+        this.clearViewModel = clearViewModel;   // TODO 9: Create clearViewModel
+
         signupViewModel.addPropertyChangeListener(this);
 
         JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
@@ -54,6 +68,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         //      a CLEAR_BUTTON_LABEL constant which is defined in the SignupViewModel class.
         //      You need to add this "clear" button to the "buttons" panel.
         clear = new JButton(SignupViewModel.CLEAR_BUTTON_LABEL);
+        buttons.add(clear); // TODO 10: added clear button to buttons panel
 
         signUp.addActionListener(
                 // This creates an anonymous subclass of ActionListener and instantiates it.
@@ -79,7 +94,16 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (e.getSource().equals(clear)) {
+                            StringBuilder deletedStr = clearController.execute(); // TODO 11: Call clearController* execute function
+                            // TODO 11: the reason why it returns a StringBuilder is cause this is how I'm passing the names back
+                            JOptionPane.showMessageDialog(null, deletedStr); // TODO 12: After getting the list of names we deleted, we'll display them like so
+                            // TODO 12.5: Now I need you to remember the ClearInteractor* mentioned from SignupUseCaseFactory in TODO 6
+                            // TODO 12.5: Remember that the Controller needs the clearInteractor passed in as an argument, we call the constructor for a clearInteractor but we haven't coded it yet!
+                            // TODO 12.5: Now the ClearInteractor implements the interface ClearInputBoundary
+                            // TODO 12.5: So press shift twice or ctrl+shift+f and navigate to "ClearInputBoundary.java"
 
+                        }
                     }
                 }
         );
